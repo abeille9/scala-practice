@@ -1,3 +1,5 @@
 # scala-practice
 
-Each student puts his code in subfolder named by his surname
+Semantic Social Network Analysis
+
+SemanticSNA a simple tweets classification written in Scala, using Spark and Play Framework. 
