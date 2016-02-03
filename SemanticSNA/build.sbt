@@ -2,7 +2,7 @@ name := "ScalaPlay"
 
 version := "1.0"
 
-lazy val `scalaplay` = (project in file(".")).enablePlugins(PlayScala)
+lazy val `semanticsna` = (project in file(".")).enablePlugins(PlayScala)
 
 scalaVersion := "2.11.7"
 
