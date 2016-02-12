@@ -12,4 +12,8 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 GET     /start                      controllers.Application.startStream
 GET     /stop                       controllers.Application.stopStream
 
-    
+#Publishers
+GET     /publishers/all             controllers.Publishers.showAll()
+GET     /publisher/:category/:name  controllers.Publishers.addTrustedPublisher(category,name)
+DELETE  /publisher/:name            controllers.Publishers.deletePublisher(name)
+GET     /publisher/:name            controllers.Publishers.check(name)

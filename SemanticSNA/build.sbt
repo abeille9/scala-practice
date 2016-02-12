@@ -14,6 +14,7 @@ libraryDependencies ++= Seq( jdbc , cache , ws   ,
   "org.apache.spark"  %% "spark-mllib"             % "1.6.0",
   "edu.stanford.nlp"  %  "stanford-corenlp"        % "3.6.0",
   "edu.stanford.nlp"  %  "stanford-corenlp"        % "3.6.0" classifier "models",
+  "com.github.etaty"  %% "rediscala" % "1.6.0",
   specs2 % Test )
 
 dependencyOverrides ++= Set(

@@ -5,7 +5,7 @@ import java.util.Properties
 import edu.stanford.nlp.ling.CoreAnnotations.{LemmaAnnotation, TokensAnnotation, SentencesAnnotation}
 import edu.stanford.nlp.pipeline.{Annotation, StanfordCoreNLP}
 import org.apache.spark.streaming.dstream.DStream
-import twitter4j.Status
+import twitter4j.{User, Status}
 
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.JavaConversions._
@@ -32,13 +32,20 @@ object TextCleaner {
       val lemma = token.get(classOf[LemmaAnnotation])
       if (lemma.length > 2 && !stopWords.contains(lemma)
         && isOnlyLetters(lemma)) {
-        lemmas += lemma.toLowerCase
+        lemmas += lemma
       }
     }
     lemmas
   }
 
-  def clear(stream: DStream[Status],stopWords: Set[String]) = {
-    stream.flatMap(status=>plainTextToLemmas(status.getText,stopWords,createNLPPipeline()))
+  def clear(stream: DStream[Status],stopWords: Set[String],usersList:Seq[String]):DStream[(User,Seq[String])]= {
+    stream.filter(status=> !usersList.contains(status.getUser.getName))
+      .map(status=>(status.getUser,plainTextToLemmas(status.getText,stopWords,createNLPPipeline())))
+  }
+
+  def clearSpecializedData(stream: DStream[Status],stopWords: Set[String], usersList:Seq[String]) = {
+    stream.filter(status=> usersList.contains(status.getUser.getName))
+      .map(status =>("abc",plainTextToLemmas(status.getText,stopWords,createNLPPipeline())))
   }
 }
+
