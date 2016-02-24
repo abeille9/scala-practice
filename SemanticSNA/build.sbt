@@ -10,10 +10,10 @@ libraryDependencies ++= Seq( jdbc , cache , ws   ,
   "org.apache.spark"  %% "spark-core"              % "1.6.0",
   "org.apache.spark"  %% "spark-streaming"         % "1.6.0",
   "org.apache.spark"  %% "spark-streaming-twitter" % "1.6.0",
-  "org.apache.spark"  %% "spark-sql"               % "1.6.0",
   "org.apache.spark"  %% "spark-mllib"             % "1.6.0",
   "edu.stanford.nlp"  %  "stanford-corenlp"        % "3.6.0",
   "edu.stanford.nlp"  %  "stanford-corenlp"        % "3.6.0" classifier "models",
+  "com.datastax.spark" %% "spark-cassandra-connector" % "1.5.0-RC1",
   "com.github.etaty"  %% "rediscala" % "1.6.0",
   specs2 % Test )
 

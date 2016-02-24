@@ -1,0 +1,33 @@
+{
+  "header": "Semantic Social Network Analysis",
+  "settings": "Settings",
+  "insert": "Insert",
+  "save": "Save",
+  "add": "Add",
+  "remove": "Remove",
+  "update": "Update",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "select": "Select",
+  "show": "Show",
+  "back": "Back",
+  "weekDays": {
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday"
+  },
+  "menu": {
+    "publishers": "Specialized Publishers",
+    "analysis": "Analysis",
+    "show": "Show publishers",
+    "streaming": "Streaming"
+  },
+  "publishers":{
+    "category":"Category",
+    "publishers":"Publishers",
+    "publisher":"Publisher",
+    "screenName":"Publisher Screen Name"
+  }
+}

@@ -14,6 +14,9 @@ GET     /stop                       controllers.Application.stopStream
 
 #Publishers
 GET     /publishers/all             controllers.Publishers.showAll()
-GET     /publisher/:category/:name  controllers.Publishers.addTrustedPublisher(category,name)
+POST    /publisher/add              controllers.Publishers.addPublisher
 DELETE  /publisher/:name            controllers.Publishers.deletePublisher(name)
 GET     /publisher/:name            controllers.Publishers.check(name)
+
+#Concepts
+GET     /concepts                   controllers.Concepts.Show()

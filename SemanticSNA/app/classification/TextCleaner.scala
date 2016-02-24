@@ -2,27 +2,25 @@ package classification
 
 import java.util.Properties
 
-import edu.stanford.nlp.ling.CoreAnnotations.{LemmaAnnotation, TokensAnnotation, SentencesAnnotation}
+import edu.stanford.nlp.ling.CoreAnnotations.{LemmaAnnotation, SentencesAnnotation, TokensAnnotation}
 import edu.stanford.nlp.pipeline.{Annotation, StanfordCoreNLP}
 import org.apache.spark.streaming.dstream.DStream
-import twitter4j.{User, Status}
+import twitter4j.{Status, User}
 
-import scala.collection.mutable.ArrayBuffer
 import scala.collection.JavaConversions._
+import scala.collection.mutable.ArrayBuffer
+import scala.language.postfixOps
 
-object TextCleaner {
+object TextCleaner extends Serializable{
+
   private def createNLPPipeline(): StanfordCoreNLP = {
-    val props:Properties = new Properties()
+    val props: Properties = new Properties()
     props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner")
     new StanfordCoreNLP(props)
   }
 
-  private def isOnlyLetters(str: String): Boolean = {
-    str.forall(c => Character.isLetter(c))
-  }
-
-  private def plainTextToLemmas(text: String,stopWords: Set[String],
-                        pipeline: StanfordCoreNLP): Seq[String] = {
+  private def plainTextToLemmas(text: String, stopWords: Set[String],
+                                pipeline: StanfordCoreNLP): Seq[String] = {
     val doc = new Annotation(text)
     pipeline.annotate(doc)
     val lemmas = new ArrayBuffer[String]()
@@ -38,14 +36,12 @@ object TextCleaner {
     lemmas
   }
 
-  def clear(stream: DStream[Status],stopWords: Set[String],usersList:Seq[String]):DStream[(User,Seq[String])]= {
-    stream.filter(status=> !usersList.contains(status.getUser.getName))
-      .map(status=>(status.getUser,plainTextToLemmas(status.getText,stopWords,createNLPPipeline())))
+  private def isOnlyLetters(str: String): Boolean = {
+    str.forall(c => Character.isLetter(c))
   }
 
-  def clearSpecializedData(stream: DStream[Status],stopWords: Set[String], usersList:Seq[String]) = {
-    stream.filter(status=> usersList.contains(status.getUser.getName))
-      .map(status =>("abc",plainTextToLemmas(status.getText,stopWords,createNLPPipeline())))
+  def clear(stream: DStream[Status], stopWords: Set[String]): DStream[(User, Seq[String])] = {
+    stream.map(status => (status.getUser, plainTextToLemmas(status.getText, stopWords, createNLPPipeline())))
   }
 }
 
