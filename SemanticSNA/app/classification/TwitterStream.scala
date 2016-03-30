@@ -1,11 +1,11 @@
 package classification
 
 import akka.actor.ActorSystem
-import dao.SpecializedUsers
+import dao.{CassandraDB, SpecializedUsers}
 import org.apache.spark.streaming.twitter._
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import play.api.Play
-import twitter4j.TwitterFactory
+import twitter4j.{User, TwitterFactory}
 import twitter4j.auth.AccessToken
 
 import scala.concurrent.Await
@@ -37,26 +37,38 @@ object TwitterStream {
     val users = new SpecializedUsers()
     val specializedUsers = Await.result(users.getAll, 5 seconds)
 
-    val specializedTweets = cleanedDStream.filter(user => specializedUsers.contains(user._1.getScreenName))
-      .map(x => (Await.result(users.getCategory(x._1.getScreenName), 1 seconds), x._2))
+    def mapToCategories(iter: Iterator[(User, Seq[String])]) = {
+      implicit val system = ActorSystem()
+      val users = new SpecializedUsers()
 
-    val tweetsToCategorize = cleanedDStream.filter(user => specializedUsers.contains(user._1.getScreenName))
+      iter.map(x => (Await.result(users.getCategory(x._1.getScreenName), 1 seconds), x._2))
+    }
 
-    specializedTweets.reduceByKeyAndWindow((a: Seq[String], b: Seq[String]) => a.toList ::: b.toList, Seconds(3600), Seconds(3500))
+    val specializedTweets = cleanedDStream.filter(user =>
+      specializedUsers.contains(user._1.getScreenName))
+      .mapPartitions(mapToCategories)
 
-    specializedTweets.foreachRDD(rdd => {
-      val count = rdd.count()
-      if (count > 0) {
-        print("Specialized tweets nr" + count)
-        rdd.foreach(x => print(x._1 + ":" + x._2.mkString))
-        rdd.saveAsTextFile("trusted")
-      }
-    })
+    val tweetsToCategorize = cleanedDStream.filter(user => !specializedUsers.contains(user._1.getScreenName))
+
+    //specializedTweets.reduceByKeyAndWindow((a: Seq[String], b: Seq[String]) => a.toList ::: b.toList, Seconds(3600), Seconds(3500))
+
+    specializedTweets
+      .reduceByKeyAndWindow((a: Seq[String], b: Seq[String]) => a.toList ::: b.toList, Seconds(600), Seconds(600))
+      .foreachRDD(rdd => {
+        val count = rdd.count()
+        if (count > 0) {
+          val alg = new Algorithms(rdd)
+          CassandraDB.insertConcepts(rdd.map(x => (x._1, x._2, alg.bIdfs)))
+          print("Specialized tweets nr" + count)
+          rdd.foreach(x => print(x._1 + ":" + x._2.mkString))
+        }
+      })
     specializedTweets.print()
 
     ssc.start()
     ssc.awaitTermination()
   }
+
 
   def stopStream() = {
     stream.context.stop(stopSparkContext = false, stopGracefully = true)

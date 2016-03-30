@@ -13,5 +13,7 @@ object SparkConfig {
     .set("spark.akka.logLifecycleEvents", "true")
     .set("spark.cassandra.connection.host", "127.0.0.1")
 
-  val sc = new SparkContext(conf)
+  private def psc = new SparkContext(conf)
+  val sc = psc
+
 }

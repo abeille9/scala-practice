@@ -29,7 +29,7 @@ object Publishers extends Controller {
 
   def deletePublisher(name: String) = Action {
     users.remove(name)
-    Ok("removed")
+    Ok("Removed")
   }
 
   def showAll() = Action {

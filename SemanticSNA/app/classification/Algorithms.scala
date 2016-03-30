@@ -9,11 +9,11 @@ import twitter4j.Status
 
 import scala.collection.mutable.HashMap
 
-class Algorithms(sc: SparkContext, stream: DStream[Status], lemmatized:RDD[Seq[String]]) {
+class Algorithms(lemmatized:RDD[(String,Seq[String])]) {
 
   val hashingTF = new HashingTF()
 
-  val tf = hashingTF.transform(lemmatized)
+  val tf = hashingTF.transform(lemmatized.map(_._2))
 
   tf.cache()
 
@@ -21,7 +21,7 @@ class Algorithms(sc: SparkContext, stream: DStream[Status], lemmatized:RDD[Seq[S
 
   val tfidf = idf.transform(tf)
 
-  val docTermFreqs = lemmatized.map(terms => {
+  val docTermFreqs = lemmatized.map(_._2).map(terms => {
     val termFreqs = terms.foldLeft(new HashMap[String, Int]()) {
       (map, term) => {
         map += term -> (map.getOrElse(term, 0) + 1)
@@ -48,8 +48,8 @@ class Algorithms(sc: SparkContext, stream: DStream[Status], lemmatized:RDD[Seq[S
   val idTerms = idfs.keys.zipWithIndex.toMap
   val termIds = idTerms.map(_.swap)
 
-  val bIdfs = sc.broadcast(idfs).value
-  val bIdTerms = sc.broadcast(idTerms).value
+  val bIdfs = SparkConfig.sc.broadcast(idfs).value
+  val bIdTerms = SparkConfig.sc.broadcast(idTerms).value
 
   val vecs = docTermFreqs.map(termFreqs => {
     val docTotalTerms = termFreqs.values.sum

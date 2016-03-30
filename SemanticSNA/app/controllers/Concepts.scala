@@ -6,7 +6,7 @@ import play.api.mvc.{Action, Controller}
 object Concepts extends Controller {
 
   def Show() = Action {
-    CassandraDB.printTestData()
+    //CassandraDB.printTestData()
     Ok("All data from db")
   }
 
