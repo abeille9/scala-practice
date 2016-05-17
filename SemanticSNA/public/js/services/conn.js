@@ -40,16 +40,29 @@ var $conn = (function () {
         put: function (url, params, callback) {
             $.ajax({
                 url: url,
-                headers: {
-                    'Content-Type': "application/json"
-                },
-                type: 'PUT',
+                type: 'DELETE',
                 data: params,
                 success: function (data) {
                     callback(data)
                 },
                 error: function (xhr, status, err) {
                     console.error(xhr.status, err.toString());
+                }
+            });
+        },
+
+        delete: function (url, callback) {
+            $.ajax({
+                url: url,
+                headers: {
+                    'Content-Type': "application/json"
+                },
+                type: 'DELETE',
+                success: function (data) {
+                    callback(data)
+                },
+                error: function (xhr, status, err) {
+                    console.log(xhr);
                 }
             });
         },

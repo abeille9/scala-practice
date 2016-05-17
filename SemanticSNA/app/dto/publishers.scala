@@ -21,5 +21,5 @@ case class Publishers(publishers:List[Publisher])
 
 object Publishers {
 
-  implicit val attendanceListDtoWrites: Writes[Publishers] = Json.writes[Publishers]
+  implicit val publishersDtoWrites: Writes[Publishers] = Json.writes[Publishers]
 }

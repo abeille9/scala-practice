@@ -1,8 +1,8 @@
-package classification
+package config
 
-import org.apache.spark.{SparkContext, SparkConf}
+import org.apache.spark.{SparkConf, SparkContext}
 
-object SparkConfig {
+trait SparkConfig {
   val driverPort = 8080
   val driverHost = "localhost"
   val conf = new SparkConf(false) // skip loading external settings
@@ -13,7 +13,6 @@ object SparkConfig {
     .set("spark.akka.logLifecycleEvents", "true")
     .set("spark.cassandra.connection.host", "127.0.0.1")
 
-  private def psc = new SparkContext(conf)
-  val sc = psc
+  val sc : SparkContext = SparkContext.getOrCreate(conf)
 
 }

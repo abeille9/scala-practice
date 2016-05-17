@@ -71,7 +71,8 @@ var MainLayout = React.createClass({
                     React.createElement(
                         'a',
                         { className: 'navbar-brand', href: '/' },
-                        ' ',
+                        React.createElement('span', { className: 'fa fa-twitter', style: { color: "#29D3DE" } }),
+                        ' ',
                         lang.t("header")
                     )
                 ),

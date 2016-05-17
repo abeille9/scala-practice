@@ -23,6 +23,7 @@ between
 both
 but
 by
+can
 can't
 cannot
 could
@@ -62,6 +63,7 @@ himself
 his
 how
 how's
+http
 i
 i'd
 i'll
@@ -76,13 +78,17 @@ it
 it's
 its
 itself
+get
 let's
 me
+make
+may
 more
 most
 mustn't
 my
 myself
+new
 no
 nor
 not
@@ -100,6 +106,7 @@ out
 over
 own
 same
+say
 shan't
 she
 she'd
@@ -136,6 +143,7 @@ under
 until
 up
 very
+via
 was
 wasn't
 we
@@ -158,7 +166,9 @@ who's
 whom
 why
 why's
+will
 with
+without
 won't
 would
 wouldn't

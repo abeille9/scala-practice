@@ -20,3 +20,7 @@ GET     /publisher/:name            controllers.Publishers.check(name)
 
 #Concepts
 GET     /concepts                   controllers.Concepts.Show()
+GET     /train                      controllers.Concepts.StartTraining()
+GET     /words/:category            controllers.Concepts.getWords(category)
+GET     /categories                 controllers.Concepts.getCategories
+GET     /update                     controllers.Concepts.takeNewTweets

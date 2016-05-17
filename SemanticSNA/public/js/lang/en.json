@@ -20,14 +20,17 @@
   },
   "menu": {
     "publishers": "Specialized Publishers",
-    "analysis": "Analysis",
+    "analysis": "Classification",
     "show": "Show publishers",
-    "streaming": "Streaming"
+    "streaming": "Concepts"
   },
   "publishers":{
     "category":"Category",
     "publishers":"Publishers",
     "publisher":"Publisher",
     "screenName":"Publisher Screen Name"
+  },
+  "concepts":{
+    "categories":"Select Category"
   }
 }

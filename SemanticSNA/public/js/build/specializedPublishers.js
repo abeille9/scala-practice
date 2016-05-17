@@ -113,8 +113,8 @@ var FilterablePublisherTable = React.createClass({
     }
 });
 
-var AddCategory = React.createClass({
-    displayName: "AddCategory",
+var AddPublisher = React.createClass({
+    displayName: "AddPublisher",
 
     addPublisher: function () {
         var category = $('#cat').val();
@@ -190,6 +190,121 @@ var AddCategory = React.createClass({
                                 " ",
                                 lang.t("add")
                             )
+                        )
+                    )
+                )
+            )
+        );
+    }
+});
+
+var RemovePublisher = React.createClass({
+    displayName: "RemovePublisher",
+
+    getInitialState: function () {
+        return {
+            publishers: [],
+            name: ""
+        };
+    },
+    componentDidMount: function () {
+        items = [];
+        self = this;
+        publishers = [];
+        setTimeout(this.handleTimeout, 500);
+        $conn.get("/publishers/all", function (data) {
+            $.each(data.publishers, function (i, item) {
+                publishers.push({ name: item.name });
+            });
+            self.setState({ publishers: publishers });
+        });
+    },
+    deletePublisher: function (name) {
+        this.replaceState({ publishers: this.state.publishers.filter(n => n.name != name) });
+        if (name) {
+            $conn.delete("/publisher/" + name, self.responseHandler);
+        }
+    },
+    responseHandler: function (data) {},
+    render: function () {
+        console.log("render" + this.state.publishers.length);
+        self = this;
+        items = [];
+        var checkBox;
+        if (this.state.publishers[0]) {
+            $.each(this.state.publishers, function (i, item) {
+                checkBox = React.createElement(
+                    "button",
+                    { key: item.name, type: "button", className: "btn btn-default",
+                        onClick: function (e) {
+                            return self.deletePublisher(item.name);
+                        } },
+                    lang.t("remove"),
+                    " "
+                );
+                items.push(React.createElement(
+                    "tr",
+                    null,
+                    React.createElement(
+                        "td",
+                        null,
+                        " ",
+                        i + 1
+                    ),
+                    React.createElement(
+                        "td",
+                        null,
+                        " ",
+                        item.name
+                    ),
+                    React.createElement(
+                        "td",
+                        null,
+                        " ",
+                        checkBox
+                    )
+                ));
+            });
+        }
+        return React.createElement(
+            "div",
+            { className: "col-lg-6" },
+            React.createElement(
+                "div",
+                { className: "panel-body" },
+                React.createElement(
+                    "div",
+                    { className: "table-responsive" },
+                    React.createElement(
+                        "table",
+                        { className: "table table-striped table-bordered", key: this.state.publishers.length, ref: "table" },
+                        React.createElement(
+                            "thead",
+                            null,
+                            React.createElement(
+                                "tr",
+                                null,
+                                React.createElement(
+                                    "th",
+                                    null,
+                                    "#"
+                                ),
+                                React.createElement(
+                                    "th",
+                                    null,
+                                    lang.t("publishers.screenName")
+                                ),
+                                React.createElement(
+                                    "th",
+                                    null,
+                                    lang.t("remove")
+                                )
+                            )
+                        ),
+                        React.createElement(
+                            "tbody",
+                            null,
+                            items
                         )
                     )
                 )

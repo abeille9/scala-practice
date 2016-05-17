@@ -21,7 +21,7 @@ object Publishers extends Controller {
         BadRequest(Json.obj("status" -> "Invalid format", "error" -> JsError.toJson(errors)))
       },
       publisher => {
-        users.addUser(publisher.name,publisher.category)
+        users.addUser(publisher.name, publisher.category)
         Ok("Succes")
       }
     )
@@ -36,6 +36,7 @@ object Publishers extends Controller {
     val publishers = Await.result(users.getAll, 5 seconds)
     var response = new ArrayBuffer[dto.Publisher]()
     publishers.foreach(x => response.+=(dto.Publisher(x, Await.result(users.getCategory(x), 2 seconds))))
+    response.groupBy(_.category).foreach(x=>    println(x._1+":"+x._2.length))
     Ok(Json.toJson(dto.Publishers(response.sortBy(_.category).toList)))
   }
 

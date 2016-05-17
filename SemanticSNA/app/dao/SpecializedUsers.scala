@@ -3,7 +3,10 @@ package dao
 import akka.actor.ActorSystem
 import redis.RedisClient
 
+import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
+import scala.language.postfixOps
 
 class SpecializedUsers extends Serializable{
   implicit val system = ActorSystem()
@@ -19,7 +22,7 @@ class SpecializedUsers extends Serializable{
     redis.exists(name)
   }
 
-  def getCategory=(name: String) => {
+  def getCategory (name: String) ={
     redis.get(name).map {
       case Some(category) => category.decodeString("UTF8")
       case None => "unknown"
@@ -28,6 +31,13 @@ class SpecializedUsers extends Serializable{
 
   def getAll = {
     redis.keys("*")
+  }
+
+  def userCategory() : Map[String,String]= {
+    var map = for {key <- Await.result(getAll,2 seconds)} yield {
+      Tuple2(key,Await.result(getCategory(key),2 second))
+    }
+    map.toMap
   }
 
   def remove(name: String) = {

@@ -1,17 +1,39 @@
 package dao
 
-import classification.SparkConfig
 import com.datastax.spark.connector.cql.CassandraConnector
 import com.datastax.spark.connector._
+import config.SparkConfig
+import models.Concept
 import org.apache.spark.SparkConf
+import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.rdd.RDD
 
-object CassandraDB{
-  def insertConcepts(rdd: RDD[(String, Seq[String], scala.collection.Map[String,Double])]) = {
+import scala.collection.mutable
 
-    rdd.saveToCassandra("SemanticSNA","concept")
+class CassandraDB extends Serializable with SparkConfig{
+  def write(category: String, termFreqs: mutable.HashMap[String, Int]) = {
+    val dateToSave = termFreqs.map(row => (row._1,row._2,category))
+    val collection = sc.parallelize(dateToSave.toSeq)
+    collection.saveToCassandra("semanticsna","test", SomeColumns("term","tfidf", "category"))
   }
 
+  def insertConceptsTest(seq: Seq[Concept]) = {
+    val collection = sc.parallelize(seq)
+    collection.saveToCassandra("semanticsna","test", SomeColumns("term", "tfidf","category"))
+  }
+
+  def test(): Unit = {
+
+    val collection = sc.parallelize(Seq(("cat", " ",2), ("fox", " ",2)))
+    collection.saveToCassandra("semanticsna","test", SomeColumns("term", "category","tfidf"))
+    val rdd = sc.cassandraTable("semanticsna","test")
+    rdd.collect().foreach(println)
+  }
+
+  def insertConcepts(rdd: RDD[(String, Seq[String], scala.collection.Map[String,Double])]) = {
+
+    rdd.saveToCassandra("semanticsna","concept")
+  }
 
   def createSchema(conf:SparkConf): Unit = {
     CassandraConnector(conf).withSessionDo { session =>
